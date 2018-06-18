@@ -7,7 +7,6 @@ package com.stalary.lightmq;
 
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
@@ -26,8 +25,8 @@ public class OperatorService {
         // 将每一个消费者组都进行修改
         List<Message> allQueue = QueueFactory.getAllQueue();
         for (Message message : allQueue) {
-            Map<String, BlockingDeque<MessageDto>> blockingDequeMap = message.getMessage();
-            BlockingDeque<MessageDto> messageDtos = blockingDequeMap.getOrDefault(topic, null);
+            Map<String, LinkedBlockingDeque<MessageDto>> blockingDequeMap = message.getMessage();
+            LinkedBlockingDeque<MessageDto> messageDtos = blockingDequeMap.getOrDefault(topic, null);
             if (messageDtos == null) {
                 messageDtos = new LinkedBlockingDeque<>(100);
             }

@@ -73,4 +73,8 @@ public class QueueFactory {
     public static List<Message> getAllQueue() {
         return messageList;
     }
+
+    public static void setAllQueue(List<Message> messages) {
+        messageList = messages;
+    }
 }

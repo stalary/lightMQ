@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Message
@@ -26,5 +27,5 @@ public class Message {
 
     private String group;
 
-    private Map<String, BlockingDeque<MessageDto>> message = new HashMap<>();
+    private Map<String, LinkedBlockingDeque<MessageDto>> message = new HashMap<>();
 }

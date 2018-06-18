@@ -5,6 +5,7 @@
  */
 package com.stalary.lightmq;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -14,22 +15,23 @@ import lombok.Data;
  * @since 2018/06/18
  */
 @Data
+@AllArgsConstructor
 public class MessageDto {
 
     /**
      * 主题
      */
-    private final String topic;
+    private String topic;
 
     /**
      * 键，可以为空
      */
-    private final String key;
+    private String key;
 
     /**
      * 值
      */
-    private final String value;
+    private String value;
 
     public MessageDto(String topic, String value) {
         this.topic = topic;
@@ -37,9 +39,4 @@ public class MessageDto {
         this.key = "";
     }
 
-    public MessageDto(String topic, String key, String value) {
-        this.topic = topic;
-        this.key = key;
-        this.value = value;
-    }
 }
