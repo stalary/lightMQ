@@ -37,8 +37,10 @@ public class OperatorService {
                     group.setMessage(temp);
                 }
                 message.setMessageGroup(messageGroup);
+                return;
             }
         }
+        throw new MyException(ExceptionEnum.NO_TOPIC);
     }
 
     public MessageDto consume(String group, String topic) {
