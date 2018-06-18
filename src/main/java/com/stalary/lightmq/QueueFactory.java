@@ -5,13 +5,15 @@
  */
 package com.stalary.lightmq;
 
+import com.stalary.lightmq.data.Message;
+import com.stalary.lightmq.data.MessageDto;
+import com.stalary.lightmq.data.MessageGroup;
 import com.stalary.lightmq.exception.ExceptionEnum;
 import com.stalary.lightmq.exception.MyException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * QueueFactory

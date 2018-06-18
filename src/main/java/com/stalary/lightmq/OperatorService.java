@@ -6,6 +6,9 @@
 package com.stalary.lightmq;
 
 import com.google.common.collect.Lists;
+import com.stalary.lightmq.data.Message;
+import com.stalary.lightmq.data.MessageDto;
+import com.stalary.lightmq.data.MessageGroup;
 import com.stalary.lightmq.exception.ExceptionEnum;
 import com.stalary.lightmq.exception.MyException;
 import org.springframework.stereotype.Service;

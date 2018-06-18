@@ -3,7 +3,7 @@
  * <p>
  * Copyright 2018 Stalary.
  */
-package com.stalary.lightmq;
+package com.stalary.lightmq.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
