@@ -6,6 +6,8 @@
 package com.stalary.lightmq;
 
 import com.google.common.collect.Lists;
+import com.stalary.lightmq.exception.ExceptionEnum;
+import com.stalary.lightmq.exception.MyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,7 +49,7 @@ public class OperatorService {
     public void registerGroup(String group, String topic) {
         Message message = QueueFactory.getOneMessage(topic);
         if (topic == null) {
-            throw new IllegalArgumentException("topic未注册");
+            throw new MyException(ExceptionEnum.NO_TOPIC);
         }
         message.getMessageGroup().add(new MessageGroup(group, new LinkedBlockingDeque<>(100)));
     }

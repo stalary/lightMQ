@@ -5,6 +5,8 @@
  */
 package com.stalary.lightmq;
 
+import com.stalary.lightmq.exception.ExceptionEnum;
+import com.stalary.lightmq.exception.MyException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -22,12 +24,13 @@ public class QueueFactory {
     /**
      * 默认分组
      */
-    public static final String DEFAULT_GROUP ="master";
+    public static final String DEFAULT_GROUP = "master";
 
     private static List<Message> messageList = new ArrayList<>();
 
     /**
      * 获取一个queue
+     *
      * @param group
      * @param topic
      * @return
@@ -48,7 +51,7 @@ public class QueueFactory {
                 }
             }
         }
-        throw new IllegalArgumentException("不存在该topic");
+        throw new MyException(ExceptionEnum.NO_TOPIC);
     }
 
     public static Message getOneMessage(String topic) {
@@ -58,11 +61,12 @@ public class QueueFactory {
                 return message;
             }
         }
-        throw new IllegalArgumentException("不存在该topic");
+        throw new MyException(ExceptionEnum.NO_TOPIC);
     }
 
     /**
      * 获取所有的队列，debug使用
+     *
      * @return
      */
     public static List<Message> getAllQueue() {

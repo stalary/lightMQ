@@ -32,7 +32,7 @@ public class FacadeController {
             @RequestParam(required = false, defaultValue = "") String key,
             @RequestParam String value) {
         service.produce(topic, key, value);
-        return JsonResponse.success();
+        return JsonResponse.success("消息发送成功");
     }
 
     @GetMapping("/consume")
