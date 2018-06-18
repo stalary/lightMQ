@@ -1,0 +1,25 @@
+# Compiled class file
+*.class
+.idea/
+.mvn/
+*.iml
+
+# Log file
+*.log
+
+
+# Package Files #
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+build
+src/target
+target
+
+logs
+mvnw
+mvnw.cmd
+save.json
+
