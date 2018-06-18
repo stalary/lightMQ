@@ -26,16 +26,6 @@ public class QueueFactory {
 
     private static List<Message> messageList = new ArrayList<>();
 
-    static {
-        init();
-    }
-
-    private static void init() {
-        Message message = new Message();
-        message.setGroup(DEFAULT_GROUP);
-        messageList.add(message);
-    }
-
     /**
      * 获取一个queue
      * @param group
@@ -49,21 +39,26 @@ public class QueueFactory {
         }
         List<Message> allQueue = getAllQueue();
         for (Message message : allQueue) {
-            if (group.equals(message.getGroup())) {
-                return message.getMessage().getOrDefault(topic, null);
+            if (topic.equals(message.getTopic())) {
+                List<MessageGroup> messageGroup = message.getMessageGroup();
+                for (MessageGroup g : messageGroup) {
+                    if (group.equals(g.getGroup())) {
+                        return g.getMessage();
+                    }
+                }
             }
         }
         throw new IllegalArgumentException("不存在该topic");
     }
 
-    public static Message getOneMessage(String group) {
+    public static Message getOneMessage(String topic) {
         List<Message> allQueue = getAllQueue();
         for (Message message : allQueue) {
-            if (group.equals(message.getGroup())) {
+            if (topic.equals(message.getTopic())) {
                 return message;
             }
         }
-        throw new IllegalArgumentException("不存在该group");
+        throw new IllegalArgumentException("不存在该topic");
     }
 
     /**

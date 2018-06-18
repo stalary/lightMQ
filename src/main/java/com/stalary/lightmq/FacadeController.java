@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * FacadeController
@@ -28,7 +31,7 @@ public class FacadeController {
             @RequestParam String topic,
             @RequestParam(required = false, defaultValue = "") String key,
             @RequestParam String value) {
-        service.produce(topic, value);
+        service.produce(topic, key, value);
         return JsonResponse.success();
     }
 
@@ -44,10 +47,34 @@ public class FacadeController {
         return JsonResponse.success(QueueFactory.getAllQueue());
     }
 
-    @GetMapping("/register")
-    public JsonResponse register(
-            @RequestParam String group) {
-        service.registerGroup(group);
-        return JsonResponse.success();
+    /**
+     * 获取所有topic
+     * @return
+     */
+    @GetMapping("/getAllTopic")
+    public JsonResponse getAllTopic() {
+        List<String> topicList = QueueFactory.getAllQueue().stream().map(Message::getTopic).collect(Collectors.toList());
+        return JsonResponse.success(topicList);
+    }
+
+    /**
+     * 注册group
+     * @param group
+     * @param topic
+     * @return
+     */
+    @GetMapping("/registerGroup")
+    public JsonResponse registerGroup(
+            @RequestParam String group,
+            @RequestParam String topic) {
+        service.registerGroup(group, topic);
+        return JsonResponse.success("注册group成功");
+    }
+
+    @GetMapping("/registerTopic")
+    public JsonResponse registerTopic(
+            @RequestParam String topic) {
+        service.registerTopic(topic);
+        return JsonResponse.success("注册topic成功");
     }
 }
