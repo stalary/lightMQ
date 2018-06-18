@@ -7,9 +7,7 @@ package com.stalary.lightmq;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -26,21 +24,16 @@ public class QueueFactory {
      */
     public static final String DEFAULT_GROUP ="master";
 
-    private static class MessageQueue {
-        /**
-         * 通过map来进行分组消费 "group": {"topic": MessageDto}
-         */
-        private static Map<String, Map<String, BlockingDeque<MessageDto>>> message = new HashMap<>();
-    }
+    private static List<Message> messageList = new ArrayList<>();
 
     static {
         init();
     }
 
     private static void init() {
-        Map<String, BlockingDeque<MessageDto>> defaultMap = new HashMap<>();
-//        defaultMap.put(null, new LinkedBlockingDeque<>(100));
-        getAllQueue().put(DEFAULT_GROUP, defaultMap);
+        Message message = new Message();
+        message.setGroup(DEFAULT_GROUP);
+        messageList.add(message);
     }
 
     /**
@@ -54,10 +47,30 @@ public class QueueFactory {
         if (StringUtils.isEmpty(group)) {
             group = DEFAULT_GROUP;
         }
-        return MessageQueue.message.getOrDefault(group, new HashMap<>(1)).getOrDefault(topic, null);
+        List<Message> allQueue = getAllQueue();
+        for (Message message : allQueue) {
+            if (group.equals(message.getGroup())) {
+                return message.getMessage().getOrDefault(topic, null);
+            }
+        }
+        throw new IllegalArgumentException("不存在该topic");
     }
 
-    public static Map<String, Map<String, BlockingDeque<MessageDto>>> getAllQueue() {
-        return MessageQueue.message;
+    public static Message getOneMessage(String group) {
+        List<Message> allQueue = getAllQueue();
+        for (Message message : allQueue) {
+            if (group.equals(message.getGroup())) {
+                return message;
+            }
+        }
+        throw new IllegalArgumentException("不存在该group");
+    }
+
+    /**
+     * 获取所有的队列，debug使用
+     * @return
+     */
+    public static List<Message> getAllQueue() {
+        return messageList;
     }
 }

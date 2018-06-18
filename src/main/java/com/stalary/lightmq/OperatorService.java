@@ -8,6 +8,7 @@ package com.stalary.lightmq;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -23,16 +24,16 @@ public class OperatorService {
 
     public void produce(String topic, String value) {
         // 将每一个消费者组都进行修改
-        Map<String, Map<String, BlockingDeque<MessageDto>>> allQueue = QueueFactory.getAllQueue();
-        for (String key : allQueue.keySet()) {
-            Map<String, BlockingDeque<MessageDto>> blockingDequeMap = allQueue.getOrDefault(key, new HashMap<>(1));
+        List<Message> allQueue = QueueFactory.getAllQueue();
+        for (Message message : allQueue) {
+            Map<String, BlockingDeque<MessageDto>> blockingDequeMap = message.getMessage();
             BlockingDeque<MessageDto> messageDtos = blockingDequeMap.getOrDefault(topic, null);
             if (messageDtos == null) {
                 messageDtos = new LinkedBlockingDeque<>(100);
             }
             messageDtos.offer(new MessageDto(topic, value));
             blockingDequeMap.put(topic, messageDtos);
-            allQueue.put(key, blockingDequeMap);
+            message.setMessage(blockingDequeMap);
         }
     }
 
@@ -42,7 +43,9 @@ public class OperatorService {
     }
 
     public void registerGroup(String group) {
-        Map<String, BlockingDeque<MessageDto>> defaultMap = QueueFactory.getAllQueue().get(QueueFactory.DEFAULT_GROUP);
-        QueueFactory.getAllQueue().put(group, defaultMap);
+        List<Message> allQueue = QueueFactory.getAllQueue();
+        Message message = new Message();
+        message.setGroup(group);
+        allQueue.add(message);
     }
 }
