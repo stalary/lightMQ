@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.concurrent.BlockingDeque;
 
 /**
  * FacadeController
@@ -27,6 +26,7 @@ public class FacadeController {
     @GetMapping("/produce")
     public JsonResponse produce(
             @RequestParam String topic,
+            @RequestParam(required = false, defaultValue = "") String key,
             @RequestParam String value) {
         service.produce(topic, value);
         return JsonResponse.success();
@@ -37,5 +37,17 @@ public class FacadeController {
             @RequestParam(required = false, defaultValue = QueueFactory.DEFAULT_GROUP) String group,
             @RequestParam String topic) {
         return JsonResponse.success(service.consume(group, topic));
+    }
+
+    @GetMapping("/getAll")
+    public JsonResponse getAll() {
+        return JsonResponse.success(QueueFactory.getAllQueue());
+    }
+
+    @GetMapping("/register")
+    public JsonResponse register(
+            @RequestParam String group) {
+        service.registerGroup(group);
+        return JsonResponse.success();
     }
 }

@@ -60,9 +60,4 @@ public class QueueFactory {
     public static Map<String, Map<String, BlockingDeque<MessageDto>>> getAllQueue() {
         return MessageQueue.message;
     }
-
-    public static void registerGroup(String group) {
-        Map<String, BlockingDeque<MessageDto>> defaultMap = getAllQueue().get(DEFAULT_GROUP);
-        getAllQueue().put(group, defaultMap);
-    }
 }

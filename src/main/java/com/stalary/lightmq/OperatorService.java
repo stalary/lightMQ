@@ -40,4 +40,9 @@ public class OperatorService {
         BlockingDeque<MessageDto> oneQueue = QueueFactory.getOneQueue(group, topic);
         return oneQueue.poll();
     }
+
+    public void registerGroup(String group) {
+        Map<String, BlockingDeque<MessageDto>> defaultMap = QueueFactory.getAllQueue().get(QueueFactory.DEFAULT_GROUP);
+        QueueFactory.getAllQueue().put(group, defaultMap);
+    }
 }
