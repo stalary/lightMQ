@@ -11,6 +11,7 @@ import com.stalary.lightmq.data.MessageDto;
 import com.stalary.lightmq.data.MessageGroup;
 import com.stalary.lightmq.exception.ExceptionEnum;
 import com.stalary.lightmq.exception.MyException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * @since 2018/06/18
  */
 @Service
+@Slf4j
 public class OperatorService {
 
     public void produce(String topic, String key, String value) {
@@ -36,7 +38,7 @@ public class OperatorService {
                 List<MessageGroup> messageGroup = message.getMessageGroup();
                 for (MessageGroup group : messageGroup) {
                     LinkedBlockingDeque<MessageDto> temp = group.getMessage();
-                    temp.add(new MessageDto(topic, key, value));
+                    temp.offer(new MessageDto(topic, key, value));
                     group.setMessage(temp);
                 }
                 message.setMessageGroup(messageGroup);
@@ -48,7 +50,12 @@ public class OperatorService {
 
     public MessageDto consume(String group, String topic) {
         BlockingDeque<MessageDto> oneQueue = QueueFactory.getOneQueue(group, topic);
-        return oneQueue.poll();
+        try {
+            return oneQueue.take();
+        } catch (InterruptedException e) {
+            log.warn("consume error", e);
+        }
+        return null;
     }
 
     public void registerGroup(String group, String topic) {
