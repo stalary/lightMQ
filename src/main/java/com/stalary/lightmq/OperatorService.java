@@ -48,15 +48,27 @@ public class OperatorService {
         throw new MyException(ExceptionEnum.NO_TOPIC);
     }
 
-    public MessageDto consume(String group, String topic) {
+    /**
+     * 默认非阻塞进行消费
+     * @param group
+     * @param topic
+     * @param block
+     * @return
+     */
+    public MessageDto consume(String group, String topic, boolean block) {
         BlockingDeque<MessageDto> oneQueue = QueueFactory.getOneQueue(group, topic);
-        try {
-            return oneQueue.take();
-        } catch (InterruptedException e) {
-            log.warn("consume error", e);
+        if (block) {
+            try {
+                return oneQueue.take();
+            } catch (InterruptedException e) {
+                log.warn("consume error", e);
+            }
+        } else {
+            return oneQueue.poll();
         }
         return null;
     }
+
 
     public void registerGroup(String group, String topic) {
         Message message = QueueFactory.getOneMessage(topic);

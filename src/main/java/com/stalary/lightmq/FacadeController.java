@@ -38,8 +38,9 @@ public class FacadeController {
     @GetMapping("/consume")
     public JsonResponse consume(
             @RequestParam(required = false, defaultValue = QueueFactory.DEFAULT_GROUP) String group,
-            @RequestParam String topic) {
-        return JsonResponse.success(service.consume(group, topic));
+            @RequestParam String topic,
+            @RequestParam(required = false, defaultValue = "false") boolean block) {
+        return JsonResponse.success(service.consume(group, topic, block));
     }
 
     @GetMapping("/getAll")
