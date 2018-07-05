@@ -14,5 +14,6 @@
 4. consume 消费消息，传入group，topic，group可不传，默认消费master
 5. getAllTopic 获取所有topic
 
-## 客户端待完成，目前只能使用http进行调用
+## 客户端地址
+https://github.com/stalary/lightMQ-client
 
