@@ -34,6 +34,7 @@ public class TomcatListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
+            // 启动时读取文件中的消息
             String content= FileUtils.readFileToString(new File(FILE_NAME), "UTF-8");
             if (StringUtils.isNotEmpty(content)) {
                 MessageList messageList = JSON.parseObject(content, MessageList.class);
@@ -47,6 +48,7 @@ public class TomcatListener implements ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         try {
+            // 退出时存储消息
             FileWriter writer = new FileWriter(FILE_NAME, false);
             JSONObject.writeJSONString(writer, new MessageList(QueueFactory.getAllQueue()));
             writer.close();
