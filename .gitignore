@@ -22,3 +22,4 @@ logs
 mvnw
 mvnw.cmd
 save.json
+upload.sh
