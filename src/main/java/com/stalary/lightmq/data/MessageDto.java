@@ -10,7 +10,7 @@ import lombok.Data;
 
 /**
  * MessageDto
- *
+ * 存储消息
  * @author lirongqian
  * @since 2018/06/18
  */

@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Message
- *
+ * 一个topic中的消息
  * @author lirongqian
  * @since 2018/06/18
  */

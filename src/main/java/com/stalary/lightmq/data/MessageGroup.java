@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * MessageGroup
- *
+ * 消息组
  * @author lirongqian
  * @since 2018/06/18
  */
