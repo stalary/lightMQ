@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 /**
  * CtrlTimerAdvice
- *
+ * 接口调用时间返回
  * @author lirongqian
  * @since 2018/04/09
  */
