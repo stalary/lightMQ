@@ -29,16 +29,20 @@ import java.io.IOException;
 @Slf4j
 public class TomcatListener implements ServletContextListener {
 
+    /** 当tomcat关闭时，内存中的数据持久化的文件中，下次读取文件 **/
     private static final String FILE_NAME = System.getProperty("user.dir") + "/save.json";
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
             // 启动时读取文件中的消息
-            String content= FileUtils.readFileToString(new File(FILE_NAME), "UTF-8");
-            if (StringUtils.isNotEmpty(content)) {
-                MessageList messageList = JSON.parseObject(content, MessageList.class);
-                QueueFactory.setAllQueue(messageList.getMessageList());
+            File file = new File(FILE_NAME);
+            if (file.exists()) {
+                String content = FileUtils.readFileToString(file, "UTF-8");
+                if (StringUtils.isNotEmpty(content)) {
+                    MessageList messageList = JSON.parseObject(content, MessageList.class);
+                    QueueFactory.setAllQueue(messageList.getMessageList());
+                }
             }
         } catch (IOException e) {
             log.warn("read error.", e);

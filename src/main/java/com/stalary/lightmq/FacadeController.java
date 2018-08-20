@@ -26,6 +26,13 @@ public class FacadeController {
     @Resource
     private OperatorService service;
 
+    /**
+     * 生产消息
+     * @param topic
+     * @param key
+     * @param value
+     * @return 消息发送成功
+     */
     @GetMapping("/produce")
     public JsonResponse produce(
             @RequestParam String topic,
@@ -35,6 +42,13 @@ public class FacadeController {
         return JsonResponse.success("消息发送成功");
     }
 
+    /**
+     * 消费消息，提供阻塞和非阻塞模式
+     * @param group 消费分组
+     * @param topic
+     * @param block 阻塞非阻塞
+     * @return 消费到的数据
+     */
     @GetMapping("/consume")
     public JsonResponse consume(
             @RequestParam(required = false, defaultValue = QueueFactory.DEFAULT_GROUP) String group,
@@ -43,6 +57,10 @@ public class FacadeController {
         return JsonResponse.success(service.consume(group, topic, block));
     }
 
+    /**
+     * 获得队列中所有数据
+     * @return 所有数据
+     */
     @GetMapping("/getAll")
     public JsonResponse getAll() {
         return JsonResponse.success(QueueFactory.getAllQueue());
@@ -50,7 +68,7 @@ public class FacadeController {
 
     /**
      * 获取所有topic
-     * @return
+     * @return 所有topic
      */
     @GetMapping("/getAllTopic")
     public JsonResponse getAllTopic() {

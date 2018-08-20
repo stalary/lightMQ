@@ -28,6 +28,12 @@ import java.util.concurrent.LinkedBlockingDeque;
 @Slf4j
 public class OperatorService {
 
+    /**
+     * 生产消息
+     * @param topic
+     * @param key
+     * @param value
+     */
     public void produce(String topic, String key, String value) {
         // 将每一个消费者组都进行修改
         List<Message> allQueue = QueueFactory.getAllQueue();
@@ -69,16 +75,39 @@ public class OperatorService {
         return null;
     }
 
-
+    /**
+     * 注册分组
+     * @param group 分组
+     * @param topic
+     */
     public void registerGroup(String group, String topic) {
         Message message = QueueFactory.getOneMessage(topic);
+        // topic还未注册
         if (topic == null) {
             throw new MyException(ExceptionEnum.NO_TOPIC);
         }
+        List<MessageGroup> messageGroup = message.getMessageGroup();
+        messageGroup.forEach(g -> {
+            if (g.getGroup().equals(group)) {
+                // 分组申请重复
+                throw new MyException(ExceptionEnum.REPEAT_GROUP);
+            }
+        });
         message.getMessageGroup().add(new MessageGroup(group, new LinkedBlockingDeque<>(100)));
     }
 
+    /**
+     * 注册topic
+     * @param topic
+     */
     public void registerTopic(String topic) {
-        QueueFactory.getAllQueue().add(new Message(topic, Lists.newArrayList(new MessageGroup(QueueFactory.DEFAULT_GROUP, new LinkedBlockingDeque<>(100)))));
+        List<Message> allQueue = QueueFactory.getAllQueue();
+        allQueue.forEach(message -> {
+            if (message.getTopic().equals(topic)) {
+                // topic申请重复
+                throw new MyException(ExceptionEnum.REPEAT_TOPIC);
+            }
+        });
+        allQueue.add(new Message(topic, Lists.newArrayList(new MessageGroup(QueueFactory.DEFAULT_GROUP, new LinkedBlockingDeque<>(100)))));
     }
 }
