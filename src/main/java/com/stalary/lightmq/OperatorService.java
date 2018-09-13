@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
@@ -29,12 +31,17 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class OperatorService {
 
     /**
-     * 生产消息
+     * 服务器性能较差，只允许最多申请10个线程
+     */
+    private ExecutorService executor = Executors.newFixedThreadPool(10);
+
+    /**
+     * 同步生产消息
      * @param topic
      * @param key
      * @param value
      */
-    public void produce(String topic, String key, String value) {
+    public void produceSyn(String topic, String key, String value) {
         // 将每一个消费者组都进行修改
         List<Message> allQueue = QueueFactory.getAllQueue();
         for (Message message : allQueue) {
@@ -49,9 +56,38 @@ public class OperatorService {
                 }
                 message.setMessageGroup(messageGroup);
                 return;
+            } else {
+                throw new MyException(ExceptionEnum.NO_TOPIC);
             }
         }
-        throw new MyException(ExceptionEnum.NO_TOPIC);
+    }
+
+    /**
+     * 异步生产消息,不保证消息的顺序
+     */
+    public void produceAsyn(String topic, String key, String value) {
+        // 将每一个消费者组都进行修改
+        List<Message> allQueue = QueueFactory.getAllQueue();
+        for (Message message : allQueue) {
+            // 查找对应的topic
+            if (topic.equals(message.getTopic())) {
+                // 通知所有消费组
+                List<MessageGroup> messageGroup = message.getMessageGroup();
+                for (MessageGroup group : messageGroup) {
+                    // 开启异步任务
+                    executor.execute(() -> {
+                        Thread.currentThread().setName("topic:" + topic + "&group:" + group);
+                        LinkedBlockingDeque<MessageDto> temp = group.getMessage();
+                        temp.offer(new MessageDto(topic, key, value));
+                        group.setMessage(temp);
+                    });
+                }
+                message.setMessageGroup(messageGroup);
+                return;
+            } else {
+                throw new MyException(ExceptionEnum.NO_TOPIC);
+            }
+        }
     }
 
     /**

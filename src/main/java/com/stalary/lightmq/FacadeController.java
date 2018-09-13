@@ -6,6 +6,9 @@
 package com.stalary.lightmq;
 
 import com.stalary.lightmq.data.Message;
+import com.stalary.lightmq.exception.ExceptionEnum;
+import com.stalary.lightmq.exception.MyException;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,24 +31,34 @@ public class FacadeController {
 
     /**
      * 生产消息
-     * @param topic
-     * @param key
-     * @param value
+     * @param topic 主题
+     * @param key 键
+     * @param value 值
+     * @param order 是否顺序，默认无序，异步生产多组
      * @return 消息发送成功
      */
     @GetMapping("/produce")
     public JsonResponse produce(
             @RequestParam String topic,
             @RequestParam(required = false, defaultValue = "") String key,
+            @RequestParam(required = false, defaultValue = "false") boolean order,
             @RequestParam String value) {
-        service.produce(topic, key, value);
+        if (StringUtils.isEmpty(value)) {
+            return JsonResponse.exception(new MyException(ExceptionEnum.NULL_VALUE));
+        }
+        if (order) {
+            // 异步生产，不保证顺序
+            service.produceAsyn(topic, key, value);
+        } else {
+            service.produceSyn(topic, key, value);
+        }
         return JsonResponse.success("消息发送成功");
     }
 
     /**
      * 消费消息，提供阻塞和非阻塞模式
      * @param group 消费分组
-     * @param topic
+     * @param topic 订阅主题
      * @param block 阻塞非阻塞
      * @return 消费到的数据
      */
@@ -78,8 +91,8 @@ public class FacadeController {
 
     /**
      * 注册group
-     * @param group
-     * @param topic
+     * @param group 消息组
+     * @param topic 订阅主题
      * @return
      */
     @GetMapping("/registerGroup")
