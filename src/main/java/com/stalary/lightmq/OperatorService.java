@@ -37,6 +37,7 @@ public class OperatorService {
 
     /**
      * 同步生产消息
+     *
      * @param topic
      * @param key
      * @param value
@@ -71,18 +72,17 @@ public class OperatorService {
         for (Message message : allQueue) {
             // 查找对应的topic
             if (topic.equals(message.getTopic())) {
-                // 通知所有消费组
-                List<MessageGroup> messageGroup = message.getMessageGroup();
-                for (MessageGroup group : messageGroup) {
-                    // 开启异步任务
-                    executor.execute(() -> {
+                // 开启异步任务
+                executor.execute(() -> {
+                    // 通知所有消费组
+                    List<MessageGroup> messageGroup = message.getMessageGroup();
+                    for (MessageGroup group : messageGroup) {
                         Thread.currentThread().setName("topic:" + topic + "&group:" + group);
                         LinkedBlockingDeque<MessageDto> temp = group.getMessage();
                         temp.offer(new MessageDto(topic, key, value));
                         group.setMessage(temp);
-                    });
-                }
-                message.setMessageGroup(messageGroup);
+                    }
+                });
                 return;
             } else {
                 throw new MyException(ExceptionEnum.NO_TOPIC);
@@ -92,6 +92,7 @@ public class OperatorService {
 
     /**
      * 默认非阻塞进行消费
+     *
      * @param group
      * @param topic
      * @param block
@@ -113,6 +114,7 @@ public class OperatorService {
 
     /**
      * 注册分组
+     *
      * @param group 分组
      * @param topic
      */
@@ -134,6 +136,7 @@ public class OperatorService {
 
     /**
      * 注册topic
+     *
      * @param topic
      */
     public void registerTopic(String topic) {
