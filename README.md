@@ -31,7 +31,7 @@ https://github.com/stalary/lightMQ-client
 
 ## 部署方式
 - 物理机启动
-> gradle clean bootjar
+> mvn clean install
 
 > java -jar target/lightmq-0.1.jar
 
