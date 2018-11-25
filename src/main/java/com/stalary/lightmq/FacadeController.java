@@ -5,7 +5,7 @@
  */
 package com.stalary.lightmq;
 
-import com.stalary.lightmq.data.Message;
+import com.stalary.lightmq.data.Constant;
 import com.stalary.lightmq.exception.ExceptionEnum;
 import com.stalary.lightmq.exception.MyException;
 import org.springframework.util.StringUtils;
@@ -42,15 +42,16 @@ public class FacadeController {
             @RequestParam String topic,
             @RequestParam(required = false, defaultValue = "") String key,
             @RequestParam(required = false, defaultValue = "false") boolean order,
+            @RequestParam(required = false, defaultValue = "true") boolean auto,
             @RequestParam String value) {
         if (StringUtils.isEmpty(value)) {
             return JsonResponse.exception(new MyException(ExceptionEnum.NULL_VALUE));
         }
-        if (order) {
+        if (!order) {
             // 异步生产，不保证顺序
-            service.produceAsyn(topic, key, value);
+            service.produceAsync(topic, key, value, auto);
         } else {
-            service.produceSyn(topic, key, value);
+            service.produceSync(topic, key, value, auto);
         }
         return JsonResponse.success("消息发送成功");
     }
@@ -59,15 +60,14 @@ public class FacadeController {
      * 消费消息，提供阻塞和非阻塞模式
      * @param group 消费分组
      * @param topic 订阅主题
-     * @param block 阻塞非阻塞
      * @return 消费到的数据
      */
     @GetMapping("/consume")
     public JsonResponse consume(
-            @RequestParam(required = false, defaultValue = QueueFactory.DEFAULT_GROUP) String group,
-            @RequestParam String topic,
-            @RequestParam(required = false, defaultValue = "false") boolean block) {
-        return JsonResponse.success(service.consume(group, topic, block));
+            @RequestParam(required = false, defaultValue = Constant.DEFAULT_GROUP) String group,
+            @RequestParam(required = false, defaultValue = "true") boolean auto,
+            @RequestParam String topic) {
+        return JsonResponse.success(service.consume(group, topic, auto));
     }
 
     /**
@@ -76,7 +76,7 @@ public class FacadeController {
      */
     @GetMapping("/getAll")
     public JsonResponse getAll() {
-        return JsonResponse.success(QueueFactory.getAllQueue());
+        return JsonResponse.success(service.getAllMessage());
     }
 
     /**
@@ -85,8 +85,7 @@ public class FacadeController {
      */
     @GetMapping("/getAllTopic")
     public JsonResponse getAllTopic() {
-        List<String> topicList = QueueFactory.getAllQueue().stream().map(Message::getTopic).collect(Collectors.toList());
-        return JsonResponse.success(topicList);
+        return JsonResponse.success(service.getAllMessage().keySet());
     }
 
     /**

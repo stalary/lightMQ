@@ -7,7 +7,8 @@ package com.stalary.lightmq;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.stalary.lightmq.data.MessageList;
+import com.stalary.lightmq.data.MessageFactory;
+import com.stalary.lightmq.data.SaveData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,8 +41,9 @@ public class TomcatListener implements ServletContextListener {
             if (file.exists()) {
                 String content = FileUtils.readFileToString(file, "UTF-8");
                 if (StringUtils.isNotEmpty(content)) {
-                    MessageList messageList = JSON.parseObject(content, MessageList.class);
-                    QueueFactory.setAllQueue(messageList.getMessageList());
+                    SaveData saveData = JSONObject.parseObject(content, SaveData.class);
+                    MessageFactory.groupMap = saveData.getGroupMap();
+                    MessageFactory.messageMap = saveData.getMessageMap();
                 }
             }
         } catch (IOException e) {
@@ -51,11 +53,9 @@ public class TomcatListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        try {
+        try (FileWriter writer = new FileWriter(FILE_NAME, false)) {
             // 退出时存储消息
-            FileWriter writer = new FileWriter(FILE_NAME, false);
-            JSONObject.writeJSONString(writer, new MessageList(QueueFactory.getAllQueue()));
-            writer.close();
+            JSONObject.writeJSONString(writer, new SaveData(MessageFactory.groupMap, MessageFactory.messageMap));
         } catch (IOException e) {
             log.warn("writer error.", e);
         }
