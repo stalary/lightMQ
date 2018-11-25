@@ -15,7 +15,11 @@ public enum ExceptionEnum {
 
     REPEAT_GROUP(1004, "group重复"),
 
-    NULL_VALUE(1005, "null value");
+    NULL_VALUE(1005, "null value"),
+
+    NULL_TOPIC(1005, "null topic"),
+
+    NULL_GROUP(1005, "null group");
 
     Integer code;
 

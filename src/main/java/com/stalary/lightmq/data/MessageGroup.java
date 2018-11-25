@@ -7,6 +7,7 @@ package com.stalary.lightmq.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -18,9 +19,16 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class MessageGroup {
 
-    private String group;
+    /** 默认分组为master **/
+    private String group = Constant.DEFAULT_GROUP;
 
-    private LinkedBlockingDeque<MessageDto> message;
+    /** 起始offset为0 **/
+    private Long offset = 0L;
+
+    public void incOffset() {
+        offset++;
+    }
 }

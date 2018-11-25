@@ -31,16 +31,20 @@ public class MessageDto {
      */
     private String value;
 
-    public MessageDto(String topic, String value) {
+    private Long offset;
+
+    public MessageDto(Long offset, String topic, String value) {
         this.topic = topic;
         this.value = value;
         this.key = "";
+        this.offset = offset;
     }
 
-    public MessageDto(String topic, String key, String value) {
+    public MessageDto(Long offset, String topic, String key, String value) {
         this.topic = topic;
         this.key = key;
         this.value = value;
+        this.offset = offset;
     }
 
     public MessageDto() {
