@@ -12,10 +12,8 @@ import com.stalary.lightmq.data.MessageGroup;
 import com.stalary.lightmq.exception.ExceptionEnum;
 import com.stalary.lightmq.exception.MyException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalLong;
@@ -63,7 +61,7 @@ public class OperatorService {
     /** 消费 **/
     public MessageDto consume(String group, String topic, boolean auto) {
         Map<Long, MessageDto> message = getOneMessage(topic, auto);
-        MessageGroup oneGroup = getOneGroup(topic, group);
+        MessageGroup oneGroup = getOneGroup(topic, group, auto);
         Long offset = oneGroup.getOffset();
         MessageDto messageDto = message.get(offset);
         if (messageDto == null) {
@@ -115,12 +113,20 @@ public class OperatorService {
     /**
      * 获取一个消费者组
      **/
-    public MessageGroup getOneGroup(String topic, String group) {
+    public MessageGroup getOneGroup(String topic, String group, boolean auto) {
         Map<String, List<MessageGroup>> groupMap = MessageFactory.groupMap;
         List<MessageGroup> messageGroups = groupMap.get(topic);
         for (MessageGroup messageGroup : messageGroups) {
             if (group.equals(messageGroup.getGroup())) {
                 return messageGroup;
+            }
+        }
+        if (auto) {
+            MessageFactory.addGroup(topic, group);
+            for (MessageGroup messageGroup : messageGroups) {
+                if (group.equals(messageGroup.getGroup())) {
+                    return messageGroup;
+                }
             }
         }
         throw new MyException(ExceptionEnum.NO_GROUP);
