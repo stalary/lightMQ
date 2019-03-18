@@ -36,4 +36,4 @@ https://github.com/stalary/lightMQ-client
 > java -jar target/lightmq-0.1.jar
 
 - docker启动
-> docker run --name lightmq -p 8001:8001 -d stalary/lightmq
+> docker run --rm --name lightmq -p 8001:8001 -d stalary/lightmq

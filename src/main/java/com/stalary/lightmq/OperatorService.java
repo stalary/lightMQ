@@ -68,7 +68,7 @@ public class OperatorService {
             return null;
         }
         // 后移offset
-        oneGroup.setOffset(offset + 1);
+        oneGroup.incOffset();
         return messageDto;
     }
 

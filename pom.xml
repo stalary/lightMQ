@@ -87,10 +87,14 @@
             </plugin>
             <!-- Docker maven plugin -->
             <plugin>
-                <groupId>com.spotify</groupId>
+                <groupId>com.spotify
+                </groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.0.0</version>
                 <configuration>
+                    <imageTags>
+                        <imageTag>0.1</imageTag>
+                    </imageTags>
                     <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
                     <dockerDirectory>src/main/docker</dockerDirectory>
                     <resources>
